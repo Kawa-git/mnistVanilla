@@ -2,7 +2,7 @@ import numpy as np
 import time
 
 class NN:
-    def __init__(self, numberofneurons, learningrate, epochs) -> None:
+    def __init__(self, numberofneurons, learningrate, epochs):
         self.numberofneurons = numberofneurons
         self.learningrate = learningrate
         self.epochs = epochs
@@ -18,19 +18,19 @@ class NN:
         self.W2 = np.random.randn(hidden_layer2, hidden_layer1) * np.sqrt(1.0/hidden_layer2)    #from hidden1 -> hidden2, size=64x128
         self.W3 = np.random.randn(output_layer, hidden_layer2) * np.sqrt(1.0/output_layer)  #from hidden2 -> output, size=10x64
 
-    def sigmoid(self, x) -> float:
+    def sigmoid(self, x):
         return 1/(1+np.exp(-x))
 
-    def sigmoid_d(self, x) -> float:
+    def sigmoid_d(self, x):
         return (np.exp(-x))/((np.exp(-x)+1)**2)
 
-    def softmax(self, x) -> float:
+    def softmax(self, x):
         return ((np.exp(x-x.max())) / np.sum((np.exp(x-x.max())), axis=0))
 
-    def softmax_d(self, x) -> float:
+    def softmax_d(self, x):
         return (np.exp(x-x.max())) / (np.sum(np.exp(x-x.max()), axis=0) * (1-(np.exp(x-x.max()))/np.sum((np.exp(x-x.max())), axis=0))) 
 
-    def forward_propagation(self, x_train) -> float:
+    def forward_propagation(self, x_train):
         self.A0 = x_train   #784x1
 
         # Input to first hidden layer
@@ -69,7 +69,7 @@ class NN:
         self.W2 -= self.learningrate * weight_change["W2"]
         self.W3 -= self.learningrate * weight_change["W3"] 
 
-    def compute_accuracy(self, test_dataset) -> None:
+    def compute_accuracy(self, test_dataset):
         predictions = []
         for x in test_dataset:
             values = x.split(",")
@@ -81,7 +81,8 @@ class NN:
             predictions.append(pred==np.argmax(targets))
         return np.mean(predictions)
 
-    def train(self, train_dataset, test_dataset) -> None:
+    def train(self, train_dataset, test_dataset):
+        print("Training started: ")
         for i in range(self.epochs):
             start_time = time.time()
             for x in train_dataset:
@@ -101,7 +102,7 @@ with open("dataset/mnist_train.csv", "r") as train_dataset:
 
 with open("dataset/mnist_test.csv", "r") as train_dataset:
     test_data = train_dataset.readlines()
-    
+
 # 784 input nodes, 128 hidden nodes, 64 hidden nodes, 10 output nodes
 nn = NN(numberofneurons=[784, 128, 64, 10], learningrate=0.01,epochs=10) 
 nn.train(train_data, test_data)  
